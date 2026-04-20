@@ -14,8 +14,12 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "https://archaeotrails.com/") // Update this to your React app's local/prod URL
-              .AllowAnyHeader()
+        policy.WithOrigins(
+                 "http://localhost:5173",
+                 "https://archaeotrails.com",
+                 "https://www.archaeotrails.com"
+             ) // Update this to your React app's local/prod URL
+               .AllowAnyHeader()
               .AllowAnyMethod();
     });
 });
