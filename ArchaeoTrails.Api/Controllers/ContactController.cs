@@ -17,21 +17,19 @@ namespace ArchaeoTrails.Api.Controllers
         }
 
         [HttpPost("send")]
-        public async Task<IActionResult> SendEmail([FromBody] ContactRequest request)
+        public IActionResult SendEmail([FromBody] ContactRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.UserEmail) || string.IsNullOrWhiteSpace(request.Message))
             {
                 return BadRequest(new { status = "error", message = "Invalid form data." });
             }
 
-            var success = await _emailService.SendContactEmailAsync(request);
+            // FIRE AND FORGET: 
+            // We start the email process on a background thread but do NOT 'await' it.
+            _ = Task.Run(() => _emailService.SendContactEmailAsync(request));
 
-            if (success)
-            {
-                return Ok(new { status = "success" });
-            }
-
-            return StatusCode(500, new { status = "error", message = "Failed to send email." });
+            // Instantly return a 200 OK to the React frontend
+            return Ok(new { status = "success" });
         }
     }
 }
